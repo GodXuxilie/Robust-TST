@@ -25,7 +25,8 @@ The first step is to obtain powerful non-parametric TSTs.
 from TST_tools import MMD_D, MMD_G, C2ST_L, C2ST_S, ME, SCF
 
 # Initialize TSTs
-MMD_D_test, MMD_G_test, C2ST_L_test, C2ST_S_test, ME_test, SCF_test = MMD_D(), MMD_G(), C2ST_L(), C2ST_S(), ME(), SCF()
+MMD_D_test, MMD_G_test, C2ST_L_test, C2ST_S_test, ME_test, SCF_test
+     = MMD_D(), MMD_G(), C2ST_L(), C2ST_S(), ME(), SCF()
 
 # Train TSTs
 P_train, Q_train = sample_from_P_Q()
