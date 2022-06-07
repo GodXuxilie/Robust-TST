@@ -15,7 +15,6 @@ parser.add_argument('--epsilon', type=float, default=0.05, help='perturbation bo
 parser.add_argument('--num_steps', type=int, default=50, help='maximum perturbation step K')
 parser.add_argument('--step_size', type=float, default=0.05, help='step size')
 parser.add_argument('--n_epochs', type=int, default=2000)
-parser.add_argument('--float', type=float, default=0.5)
 parser.add_argument('--ball', type=str, default='l_inf')
 parser.add_argument('--lr_RoD', type=float, default=0.0005, help='learning rate for MMD-RoD')
 parser.add_argument('--type1', type=int, default=0, help='whether to test Type-1 error')
