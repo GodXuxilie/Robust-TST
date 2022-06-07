@@ -7,7 +7,6 @@ from TST_tools import MMD_D, MMD_G, C2ST_S, C2ST_L, ME, SCF, MMD_RoD
 from TST_attack import two_sample_test_attack
 from TST_utils import MatConvert,Pdist2
 
-
 parser = argparse.ArgumentParser()
 ### experimental configuration ###
 parser.add_argument('--gpu', type=str, default='0')
