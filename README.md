@@ -59,10 +59,10 @@ Adv_Q_test = TST_adversary.attack(P_test, Q_test)
 ```
 
 ## How to defend non-parametric TSTs?
+You can easily obtain our proposed robust non-parametric TSTs (MMD-RoD) with the following code.
 
 ```
 from TST_tools import MMD_RoD
-from TST_attack import two_sample_test_attack
 
 # Initialize robust TSTs
 MMD_RoD_test = MMD_RoD()
