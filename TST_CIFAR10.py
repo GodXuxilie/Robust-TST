@@ -39,12 +39,11 @@ parser.add_argument('--weight', type=str, default='1,50,4,4,20,1', help='attack 
 parser.add_argument('--adaptive_weight', type=int, default=0, help='whether to use adaptive reweighting')
 parser.add_argument('--surrogate', type=int, default=0, help='whether to use surrogate non-parametric TSTs to attack target TSTs')
 parser.add_argument('--replace_P', type=int, default=0, help='whether to replace P with P_prime')
-### MMD-RoD configuration
+### MMD-RoD configuration ###
 parser.add_argument('--robust_kernel', type=int, default=0, help='whether to adversarially train deep kernels')
 parser.add_argument('--lr_RoD', type=float, default=0.0002, help='learning rate for MMD-RoD')
 parser.add_argument('--num_steps_RoD', type=int, default=1, help='number of steps during adversarial training')
 parser.add_argument('--BA', type=int, default=0, help='whether to use benign and adversarial data together during adversarially training deep kernels')
-
 args = parser.parse_args()
 print(args)
 
