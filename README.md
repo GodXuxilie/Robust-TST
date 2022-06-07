@@ -72,6 +72,13 @@ P_train, Q_train = sample_from_P_Q()
 MMD_D_test.train(P_train, Q_train)
 ```
 
+## Evaluate test power of non-parametric TSTs
+
+We provide scripts for obtaining **all** experimental results in **run.sh**. Here is an example that evaluates test power on Blob dataest.
+```
+python TST_Blob.py
+```
+
 ## Reference
 ```
 @article{xu2022adversarial,
