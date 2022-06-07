@@ -187,7 +187,7 @@ def train_MMD_D(Real_dataloader, Fake_dataloader):
     
 
 def train_MMD_G(s1, s2):
-    S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+    S = torch.cat([torch.Tensor(s1), torch.Tensor(s2)],0).cuda()
     S = S.view(2 * n, -1)
     Dxy = Pdist2(S[:n, :], S[n:, :])
     sigma0 = Dxy.median()
@@ -278,8 +278,8 @@ for kk in range(K):
         shuffle=True,
     )
     # Fetch training data
-    s1 = Real_MNIST_train_data[Ind_train_Real]
-    s2 = torch.from_numpy(Fake_MNIST_train_data[Ind_train_Fake])
+    s1 = Real_MNIST_train_data[Ind_train_Real].numpy()
+    s2 = Fake_MNIST_train_data[Ind_train_Fake]
 
     # Setup random seed for training
     np.random.seed(seed1)
@@ -339,10 +339,10 @@ for kk in range(K):
             s2 = Real_MNIST_test_data[ind_R]
         
         if args.robust_kernel:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1.cpu(), s2.cpu(),
+            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1.cpu().numpy(), s2.cpu().numpy(),
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test, MMD_RoD_test)
         else:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1.cpu(), s2.cpu(),
+            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1.cpu().numpy(), s2.cpu().numpy(),
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test)
 
         print("Round:", k+1, "MMD-D:", H_D.sum(),  "MMD-G:", H_G.sum(), "C2ST_S: ", H_C2ST_S.sum(), "C2ST_L: ", H_C2ST_L.sum(), "ME:", H_ME.sum(), "SCF:", 
@@ -404,8 +404,8 @@ for kk in range(K):
             shuffle=True,
         )
         # Fetch training data
-        s1_surrogate = Real_MNIST_train_data[Ind_train_Real_surrogate].cpu()
-        s2_surrogate = torch.from_numpy(Fake_MNIST_train_data[Ind_train_Fake_surrogate]).cpu()
+        s1_surrogate = Real_MNIST_train_data[Ind_train_Real_surrogate].numpy()
+        s2_surrogate = Fake_MNIST_train_data[Ind_train_Fake_surrogate]
 
         # Setup random seed for training
         np.random.seed(seed2)
@@ -477,7 +477,7 @@ for kk in range(K):
             ind_F = np.random.choice(len(Real_MNIST_test_data), n, replace=False)
             s2 = Real_MNIST_test_data[ind_R]
 
-        adv_s2 = TSTAttack.attack(s1.cpu(), s2.cpu())
+        adv_s2 = TSTAttack.attack(s1.cpu().nump(), s2.cpu().numpy())
 
         if args.replace_P:
             np.random.seed(seed=seed2 * (k + 555) + n)
@@ -485,12 +485,11 @@ for kk in range(K):
             s1 = Real_MNIST_test_data[ind_R]
 
         if args.robust_kernel:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1.cpu(), s2.cpu(),
+            H_D_adv[k], H_G_adv[k], H_ME_adv[k], H_SCF_adv[k], H_C2ST_S_adv[k], H_C2ST_L_adv[k], H_RoD_adv[k], H_Ensemble_adv[k] = test_procedure(s1.cpu().numpy(), adv_s2,
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test, MMD_RoD_test)
         else:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1.cpu(), s2.cpu(),
+            H_D_adv[k], H_G_adv[k], H_ME_adv[k], H_SCF_adv[k], H_C2ST_S_adv[k], H_C2ST_L_adv[k], H_RoD_adv[k], H_Ensemble_adv[k] = test_procedure(s1.cpu().numpy(), adv_s2,
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test)
-
 
         if H_Ensemble_adv[k] == 0:
             np.save('{}/FAKE_ORI_{}'.format(out_dir, save_index), s2.cpu().numpy())

@@ -33,7 +33,7 @@ parser.add_argument('--surrogate', type=int, default=0, help='whether to use sur
 parser.add_argument('--replace_P', type=int, default=0, help='whether to replace P with P_prime')
 ### MMD-RoD configuration ###
 parser.add_argument('--robust_kernel', type=int, default=0, help='whether to adversarially train deep kernels')
-parser.add_argument('--lr_RoD', type=float, default=0.0001, help='learning rate for MMD-RoD')
+parser.add_argument('--lr_RoD', type=float, default=0.00001, help='learning rate for MMD-RoD')
 parser.add_argument('--num_steps_RoD', type=int, default=1, help='number of steps during adversarial training')
 parser.add_argument('--BA', type=int, default=0, help='whether to use benign and adversarial data together during adversarially training deep kernels')
 args = parser.parse_args()
@@ -383,10 +383,10 @@ for kk in range(K):
                 s1[n * (i):n * (i + 1), :] = np.random.multivariate_normal(mu_mx[i], sigma_mx_1, n)
 
         if args.robust_kernel:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1, adv_s2,
+            H_D_adv[k], H_G_adv[k], H_ME_adv[k], H_SCF_adv[k], H_C2ST_S_adv[k], H_C2ST_L_adv[k], H_RoD_adv[k], H_Ensemble_adv[k] = test_procedure(s1, adv_s2,
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test, MMD_RoD_test)
         else:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1, adv_s2,
+            H_D_adv[k], H_G_adv[k], H_ME_adv[k], H_SCF_adv[k], H_C2ST_S_adv[k], H_C2ST_L_adv[k], H_RoD_adv[k], H_Ensemble_adv[k] = test_procedure(s1, adv_s2,
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test)
 
         print("Round:", k+1, "MMD-D:", H_D_adv.sum(),  "MMD-G:", H_G_adv.sum(), "C2ST_S: ", H_C2ST_S_adv.sum(), "C2ST_L: ", 

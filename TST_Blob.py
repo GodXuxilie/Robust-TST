@@ -391,17 +391,17 @@ for kk in range(K):
             s1, s2 = sample_blobs(N1)
 
         # Generate adversarial Q
-        adv_s2 = TSTAttack.attack(s1.cuda(), s2.cuda())
+        adv_s2 = TSTAttack.attack(s1, s2)
 
         if args.replace_P:
             np.random.seed(seed2 * k + 999 + n)
             s1, _ = sample_blobs_Q(N1, sigma_mx_2)
 
         if args.robust_kernel:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1, adv_s2,
+            H_D_adv[k], H_G_adv[k], H_ME_adv[k], H_SCF_adv[k], H_C2ST_S_adv[k], H_C2ST_L_adv[k], H_RoD_adv[k], H_Ensemble_adv[k] = test_procedure(s1, adv_s2,
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test, MMD_RoD_test)
         else:
-            H_D[k], H_G[k], H_ME[k], H_SCF[k], H_C2ST_S[k], H_C2ST_L[k], H_RoD[k], H_Ensemble[k] = test_procedure(s1, adv_s2,
+            H_D_adv[k], H_G_adv[k], H_ME_adv[k], H_SCF_adv[k], H_C2ST_S_adv[k], H_C2ST_L_adv[k], H_RoD_adv[k], H_Ensemble_adv[k] = test_procedure(s1, adv_s2,
                     MMD_D_test, MMD_G_test, C2ST_S_test, C2ST_L_test, ME_test, SCF_test)
 
         print("Round:", k+1, "MMD-D:", H_D_adv.sum(),  "MMD-G:", H_G_adv.sum(), "C2ST_S: ", H_C2ST_S_adv.sum(), "C2ST_L: ", 

@@ -97,7 +97,7 @@ class MMD_D(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s2)],0).cuda()
         if WB:
             if not self.HD:
                 h_D, _, _ = TST_WBMMD_u(self.MMD_D_args[0](S), N_per, n, S, self.MMD_D_args[1], self.MMD_D_args[2], self.MMD_D_args[3], alpha, self.device, self.dtype, ln)
@@ -140,9 +140,7 @@ class MMD_RoD(Two_Sample_Test):
             n = len(s1)
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
-            optimizer_u = torch.optim.Adam(list(self.deep_model.parameters())+[self.epsilonOPT]+[self.sigmaOPT]+[self.sigma0OPT], lr=self.hyperparameters[0]) #
-            S = np.concatenate((s1, s2), axis=0)
-            S = MatConvert(S, self.device, self.dtype)
+            optimizer_u = torch.optim.Adam(list(self.deep_model.parameters())+[self.epsilonOPT]+[self.sigmaOPT]+[self.sigma0OPT], lr=self.hyperparameters[0])
             for t in range(self.hyperparameters[1]):
                 ep = torch.exp(self.epsilonOPT)/(1+torch.exp(self.epsilonOPT))
                 sigma = self.sigmaOPT ** 2
@@ -176,7 +174,6 @@ class MMD_RoD(Two_Sample_Test):
                     Fake_imgs = data[1][0]
                     real_imgs = Variable(real_imgs.type(Tensor))
                     Fake_imgs = Variable(Fake_imgs.type(Tensor))
-                    X = torch.cat([real_imgs, Fake_imgs], 0)
                     ep = torch.exp(self.epsilonOPT) / (1 + torch.exp(self.epsilonOPT))
                     sigma = self.sigmaOPT ** 2
                     sigma0_u = self.sigma0OPT ** 2
@@ -186,9 +183,8 @@ class MMD_RoD(Two_Sample_Test):
                     self.MMD_RoD_args = (self.deep_model, self.sigma, self.sigma0_u, self.ep)
                     TSTAttack = two_sample_test_attack(num_steps=self.hyperparameters[2], epsilon=self.hyperparameters[3], step_size=self.hyperparameters[4], dynamic_eta=self.hyperparameters[5], 
                                                     verbose=self.hyperparameters[6],max_scale=Fake_imgs.max(), min_scale=Fake_imgs.min(), test_args=[(self, 1)])
-                    adv_s2 = TSTAttack.attack(s1, s2)
-                    S = np.concatenate((s1, adv_s2), axis=0)
-                    X = MatConvert(S, self.device, self.dtype)
+                    adv_Fake_imgs = TSTAttack.attack(real_imgs.cpu().numpy(), Fake_imgs.cpu().numpy())
+                    X = torch.cat([real_imgs.cpu(), torch.Tensor(adv_Fake_imgs)], 0).cuda()
                     optimizer_u.zero_grad()
                     modelu_output = self.deep_model(X)
                     TEMP = MMDu(modelu_output, real_imgs.shape[0], X.view(X.shape[0],-1), sigma, sigma0_u, ep)
@@ -215,7 +211,7 @@ class MMD_RoD(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s1)],0).cuda()
         if WB:
             if not self.HD:
                 h_D, _, _ = TST_WBMMD_u(self.MMD_RoD_args[0](S), N_per, n, S,self.MMD_RoD_args[1], self.MMD_RoD_args[2], self.MMD_RoD_args[3], alpha, self.device, self.dtype, ln)
@@ -256,7 +252,7 @@ class MMD_G(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s1)],0).cuda()
             S = S.view(2 * n, -1)
         optimizer_sigma0 = torch.optim.Adam([self.sigma0], lr=self.hyperparameters[0])
         for t in range(self.hyperparameters[1]):
@@ -278,7 +274,7 @@ class MMD_G(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s1)],0).cuda()
             S = S.view(2 * n, -1)
         if WB:
             h_G, _, _ = TST_MMD_adaptive_WB(S, N_per, n, 0, self.sigma0, alpha, self.device, self.dtype, ln)
@@ -328,7 +324,6 @@ class C2ST_S(Two_Sample_Test):
                     fake = Variable(Tensor(real_imgs.shape[0], 1).fill_(1.0), requires_grad=False)
                     real_imgs = Variable(real_imgs.type(Tensor))
                     Fake_imgs = Variable(Fake_imgs.type(Tensor))
-                    X = torch.cat([real_imgs, Fake_imgs], 0)
                     Y = torch.cat([valid, fake], 0).squeeze().long()
                     optimizaer_D.zero_grad()
                     X = torch.cat([real_imgs, Fake_imgs], 0).cuda()
@@ -465,7 +460,7 @@ class ME(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s1)],0).cuda()
             S = S.view(2 * n, -1)
         test_locs_ME, gwidth_ME = TST_ME(S, n, self.hyperparameters[0], is_train=True, test_locs=self.hyperparameters[1],
                                              gwidth=self.hyperparameters[2], J=self.hyperparameters[3], seed=self.hyperparameters[4])
@@ -478,7 +473,7 @@ class ME(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s1)],0).cuda()
             S = S.view(2 * n, -1)
         h_ME = TST_ME(S, n, alpha, is_train=False, test_locs=self.ME_args[0], gwidth=self.ME_args[1], 
                                     J=self.hyperparameters[3], seed=self.hyperparameters[4])
@@ -510,7 +505,7 @@ class SCF(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s1)],0).cuda()
             S = S.view(2 * n, -1)
         test_freqs_SCF, gwidth_SCF = TST_SCF(S, n, self.hyperparameters[0], is_train=True, test_freqs=self.hyperparameters[1],
                                              gwidth=self.hyperparameters[2], J=self.hyperparameters[3], seed=self.hyperparameters[4])
@@ -523,7 +518,7 @@ class SCF(Two_Sample_Test):
             S = np.concatenate((s1, s2), axis=0)
             S = MatConvert(S, self.device, self.dtype)
         else:
-            S = torch.cat([s1.cpu(),s2.cpu()],0).cuda()
+            S = torch.cat([torch.Tensor(s1), torch.Tensor(s1)],0).cuda()
             S = S.view(2 * n, -1)
         h_SCF = TST_SCF(S, n, alpha, is_train=False, test_freqs=self.SCF_args[0], gwidth=self.SCF_args[1], 
                                     J=self.hyperparameters[3], seed=self.hyperparameters[4])
