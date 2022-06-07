@@ -69,7 +69,7 @@ MMD_RoD_test = MMD_RoD()
 
 # Train robust TSTs
 P_train, Q_train = sample_from_P_Q()
-MMD_D_test.train(P_train, Q_train)
+MMD_RoD_test.train(P_train, Q_train)
 ```
 
 ## Evaluate test power of non-parametric TSTs
