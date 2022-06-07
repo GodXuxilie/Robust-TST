@@ -26,7 +26,7 @@ from TST_tools import MMD_D, MMD_G, C2ST_L, C2ST_S, ME, SCF
 
 # Initialize TSTs
 MMD_D_test, MMD_G_test, C2ST_L_test, C2ST_S_test, ME_test, SCF_test
-     = MMD_D(), MMD_G(), C2ST_L(), C2ST_S(), ME(), SCF()
+                    = MMD_D(), MMD_G(), C2ST_L(), C2ST_S(), ME(), SCF()
 
 # Train TSTs
 P_train, Q_train = sample_from_P_Q()
@@ -44,7 +44,9 @@ Then we can generate adversarial data against these non-parametric TSTs.
 from TST_attack import two_sample_test_attack
 
 # Attack TSTs
-TST_adversary = two_sample_test_attack(num_steps=num_steps, epsilon=epsilon,dynamic_eta=True, max_scale=max_scale, min_scale=min_scale, test_rags=[(MMD_D_test, MMD_D_weight),
+TST_adversary = two_sample_test_attack(num_steps=num_steps, epsilon=epsilon,dynamic_eta=True, 
+max_scale=max_scale, min_scale=min_scale, 
+test_rags=[(MMD_D_test, MMD_D_weight),
           (MMD_G_test, MMD_G_weight),
           (C2ST_S_test, C2ST_S_weight),
           (C2ST_L_test, C2ST_L_weight),
