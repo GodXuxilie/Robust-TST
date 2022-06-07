@@ -1,5 +1,4 @@
 import torch
-# from TST_utils import MMDu, h1_mean_var_gram, compute_ME_stat, Pdist2_S, Pdist2_L, compute_SCF_stat
 import numpy as np
 from torch.autograd import Variable
 import copy
@@ -86,8 +85,11 @@ class two_sample_test_attack:
         self.max_scale = torch.max(Fake_imgs).detach().item()
         Tensor = torch.cuda.FloatTensor
         eta = self.step_size
+
+        # Initialize noise
         delta = torch.rand_like(Variable(Fake_imgs.type(Tensor)), requires_grad=True).cuda()
         delta.data.mul_(0.001)
+
         opt_delta = torch.optim.SGD([delta], lr=eta)
         n = Fake_imgs.shape[0]
         loss_list = torch.zeros(size=(1, self.num_steps+1)).squeeze().cuda()

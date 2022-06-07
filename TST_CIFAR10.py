@@ -1,4 +1,3 @@
-from torch.autograd import Variable
 import os
 import numpy as np
 import torch
@@ -6,6 +5,7 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 from torchvision import datasets
 import argparse
+from torch.autograd import Variable
 from TST_tools import MMD_D, MMD_G, C2ST_S, C2ST_L, ME, SCF, MMD_RoD
 from TST_attack import two_sample_test_attack
 from TST_utils import MatConvert,Pdist2
@@ -57,28 +57,27 @@ K = args.trails # number of trails
 N = 100 # number of test sets
 N_f = 100.0 # number of test sets (float)
 n = args.n
-seed1 = args.seed1 
-seed2 = args.seed2
-steps = args.num_steps
-step_size = args.step_size
-epsilon = args.epsilon
 learning_rate_MMD_D = 0.0002
 learning_rate_C2ST = 0.0001
 learning_rate_MMD_G = 0.0005
 Tensor = torch.cuda.FloatTensor
 category = ['airplane','automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
-Results = np.zeros([8,K])
-ATTACKResults = np.zeros([8,K])
-
-weight_tmp = args.weight.split(",")
-weight = [int(x) for x in weight_tmp]
-weight = [x / sum(weight) for x in weight]
-
-adversarial_loss = torch.nn.CrossEntropyLoss()
+seed1 = args.seed1 
+seed2 = args.seed2
 np.random.seed(seed1)
 torch.manual_seed(seed1)
 torch.cuda.manual_seed(seed1)
 torch.backends.cudnn.deterministic = True
+
+Results = np.zeros([8,K])
+ATTACKResults = np.zeros([8,K])
+
+weight_args = args.weight.split(",")
+weight = [int(x) for x in weight_args]
+weight = [x / sum(weight) for x in weight]
+
+adversarial_loss = torch.nn.CrossEntropyLoss()
+
 
 # Setup save directory
 out_dir = 'results/CIFAR10_{}_{}_'.format(category[args.class1], category[args.class2])
@@ -215,7 +214,7 @@ def train_MMD_D(dataloader_class1, dataloader_class2):
     epsilonOPT = torch.log(MatConvert(np.random.rand(1) * 10 ** (-10),  device, dtype))
     sigmaOPT = MatConvert(np.ones(1) * np.sqrt(2 * 32 * 32), device, dtype)
     sigma0OPT = MatConvert(np.ones(1) * np.sqrt(0.005), device, dtype)
-    MMD_D_test = MMD_D(device=device, dtype=dtype, HD=True, model=Featurizer(), 
+    MMD_D_test = MMD_D(HD=True, model=Featurizer(), 
                         parameters=(epsilonOPT, sigmaOPT, sigma0OPT), hyperparameters=(learning_rate_MMD_D, args.n_epochs))
     MMD_D_test.train(dataloader_class1, dataloader_class2)
     return MMD_D_test
@@ -225,27 +224,27 @@ def train_MMD_G(s1, s2):
     S = S.view(2 * n, -1)
     Dxy = Pdist2(S[:n, :], S[n:, :])
     sigma0 = Dxy.median()
-    MMD_G_test = MMD_G(device=device, dtype=dtype, HD=True, parameters=sigma0, hyperparameters=(learning_rate_MMD_G, args.n_epochs))
+    MMD_G_test = MMD_G(HD=True, parameters=sigma0, hyperparameters=(learning_rate_MMD_G, args.n_epochs))
     MMD_G_test.train(s1, s2)
     return MMD_G_test
 
 def train_C2ST_S(dataloader_class1, dataloader_class2):
-    C2ST_S_test = C2ST_S(device=device, dtype=dtype, HD=True, hyperparameters=(learning_rate_C2ST, args.n_epochs, adversarial_loss), discriminator=Discriminator())
+    C2ST_S_test = C2ST_S(HD=True, hyperparameters=(learning_rate_C2ST, args.n_epochs, adversarial_loss), discriminator=Discriminator())
     C2ST_S_test.train(dataloader_class1, dataloader_class2)
     return C2ST_S_test
 
 def train_C2ST_L(dataloader_class1, dataloader_class2):
-    C2ST_L_test = C2ST_L(device=device, dtype=dtype, HD=True, hyperparameters=(learning_rate_C2ST, args.n_epochs, adversarial_loss), discriminator=Discriminator())
+    C2ST_L_test = C2ST_L(HD=True, hyperparameters=(learning_rate_C2ST, args.n_epochs, adversarial_loss), discriminator=Discriminator())
     C2ST_L_test.train(dataloader_class1, dataloader_class2)
     return C2ST_L_test
 
 def train_ME(s1, s2):
-    ME_test = ME(device=device, dtype=dtype, HD=True, hyperparameters=(alpha, 1,1,5,15))
+    ME_test = ME(HD=True, hyperparameters=(alpha, 1,1,5,15))
     ME_test.train(s1, s2)
     return ME_test
 
 def train_SCF(s1, s2):
-    SCF_test = SCF(device=device, dtype=dtype, HD=True, hyperparameters=(alpha, 1,1,5,15))
+    SCF_test = SCF(HD=True, hyperparameters=(alpha, 1,1,5,15))
     SCF_test.train(s1, s2)
     return SCF_test
 
@@ -253,7 +252,7 @@ def train_MMD_RoD(dataloader_class1, dataloader_class2):
     epsilonOPT = torch.log(MatConvert(np.random.rand(1) * 10 ** (-10), device, dtype))
     sigmaOPT = MatConvert(np.ones(1) * np.sqrt(2*32*32), device, dtype)
     sigma0OPT = MatConvert(np.ones(1) * np.sqrt(0.005), device, dtype)
-    MMD_RoD_test = MMD_RoD(device=device, dtype=dtype, HD=True, model=Featurizer(), 
+    MMD_RoD_test = MMD_RoD(HD=True, model=Featurizer(), 
                         parameters=(epsilonOPT, sigmaOPT, sigma0OPT), hyperparameters=(args.lr_RoD, args.n_epochs, args.attack_num, 
                                         args.epsilon, args.step_size, args.dynamic_eta, args.verbose))
     MMD_RoD_test.train(dataloader_class1, dataloader_class2)

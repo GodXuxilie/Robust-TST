@@ -6,8 +6,6 @@ import freqopttest.tst as tst
 import scipy.stats as stats
 import pdb
 from scipy import signal
-from TST_attack import two_sample_test_attack
-import copy
 
 is_cuda = True
 class ModelLatentF(torch.nn.Module):
