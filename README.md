@@ -21,19 +21,47 @@ Following the setting of [MMD-D](https://github.com/fengliu90/DK-for-TST), befor
 Import and initialize TST and adversary agaisnt TST with
 
 ```
-from TST_tools import MMD_D, MMD_G, C2ST_L, C2ST_S, ME, SCF, MMD_RoD
+from TST_tools import MMD_D, MMD_G, C2ST_L, C2ST_S, ME, SCF
 from TST_attack import two_sample_test_attack
 
-s1, s2 = sample_from_P_Q()
-MMD_D_test = MMD_D().train(s1, s2)
-MMD_
+# Initialize two-sample tests
+MMD_D_test, MMD_G_test, C2ST_L_test, C2ST_S_test, ME_test, SCF_test = MMD_D(), MMD_G(), C2ST_L(), C2ST_S(), ME(), SCF()
 
+# Train two-sample tests
+P_train, Q_train = sample_from_P_Q()
+MMD_D_test.train(P_train, Q_train)
+MMD_G_test.train(P_train, Q_train)
+C2ST_L_test.train(P_train, Q_train)
+C2ST_S_test.train(P_train, Q_train)
+ME_test.train(P_train, Q_train)
+SCF_test.train(P_train, Q_train)
 
-TST_adversary = two_sample_test_attack(num_steps=num_steps, epsilon=epsilon,dynamic_eta=1, max_scale=max_scale, min_scale=min_scale, test)
+# Attack two-sample tests
+TST_adversary = two_sample_test_attack(num_steps=num_steps, epsilon=epsilon,dynamic_eta=True, max_scale=max_scale, min_scale=min_scale, test_rags=[(MMD_D_test, MMD_D_weight),
+          (MMD_G_test, MMD_G_weight),
+          (C2ST_S_test, C2ST_S_weight),
+          (C2ST_L_test, C2ST_L_weight),
+          (ME_test, ME_weight),
+          (SCF_test, SCF_weight)])
 ```
 
 ## How to defend non-parametric TSTs?
 
+```
+from TST_tools import MMD_RoD
+from TST_attack import two_sample_test_attack
+
+# Initialize robust two-sample tests
+MMD_RoD_test = MMD_RoD()
+
+# Train two-sample tests
+P_train, Q_train = sample_from_P_Q()
+MMD_D_test.train(P_train, Q_train)
+
+
+# Attack robust two-sample tests
+TST_adversary = two_sample_test_attack(num_steps=num_steps, epsilon=epsilon,dynamic_eta=True, max_scale=max_scale, min_scale=min_scale, test_rags=[(MMD_RoD_test, MMD_RoD_weight)])
+```
 
 ## Reference
 ```
