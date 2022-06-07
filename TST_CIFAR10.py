@@ -499,7 +499,7 @@ for kk in range(K):
 
         if H_Ensemble_adv[k] == 0:
             np.save('{}/FAKE_ORI_{}'.format(out_dir, save_index), s2.cpu().numpy())
-            np.save('{}/FAKE_ADV_{}'.format(out_dir, save_index), adv_s2.cpu().numpy())
+            np.save('{}/FAKE_ADV_{}'.format(out_dir, save_index), adv_s2)
             np.save('{}/REAL_{}'.format(out_dir, save_index), s1)
             save_index += 1
 
