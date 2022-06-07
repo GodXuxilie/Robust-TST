@@ -74,7 +74,8 @@ MMD_D_test.train(P_train, Q_train)
 
 ## Evaluate test power of non-parametric TSTs
 
-We provide scripts for obtaining **all** experimental results in **run.sh**. Here is an example that evaluates test power on Blob dataest.
+We provide scripts (**run.sh**) for obtaining **all** experimental results in our paper.
+Here is an example that evaluates test power on Blob dataest.
 ```
 python TST_Blob.py
 ```
