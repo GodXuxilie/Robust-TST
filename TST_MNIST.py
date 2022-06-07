@@ -12,32 +12,37 @@ from TST_utils import MatConvert,Pdist2
 
 # parameters setting
 parser = argparse.ArgumentParser()
-parser.add_argument("--n_epochs", type=int, default=2000, help="number of epochs of training")
+### experimental configuration ###
+parser.add_argument('--gpu', type=str, default='0')
+parser.add_argument('--seed1', type=int, default=1102)
+parser.add_argument('--seed2', type=int, default=819)
+parser.add_argument('--trails', type=int, default=10, help='repeating times')
+### data set configuration ###
 parser.add_argument('--data_dir', type=str, default='../data', help='path to save raw data')
+parser.add_argument('--n', type=int, default=500, help='number of data in each set')
 parser.add_argument("--batch_size", type=int, default=100, help="size of the batches")
 parser.add_argument("--img_size", type=int, default=32, help="size of each image dimension")
 parser.add_argument("--channels", type=int, default=1, help="number of image channels")
-parser.add_argument("--n", type=int, default=500, help="number of samples in one set")
-parser.add_argument('--gpu', type=str, default='0')
-parser.add_argument('--epsilon', type=float, default=0.05, help='perturbation bound')
-parser.add_argument('--num_steps', type=int, default=50, help='maximum perturbation step K')
-parser.add_argument('--step_size', type=float, default=0.05, help='step size')
-parser.add_argument('--ball', type=str, default='l_inf')
-parser.add_argument('--lr_RoD', type=float, default=0.0005, help='learning rate for MMD-RoD')
 parser.add_argument('--type1', type=int, default=0, help='whether to test Type-1 error')
+### train and test procedure configuration ###
+parser.add_argument('--n_epochs', type=int, default=2000, help='number of training epochs')
+parser.add_argument('--WB', type=int, default=1, help='whether to use wild bootstrap')
+parser.add_argument('--ln', type=float, default=0.5, help='hyper parameters in wild bootstrap')
+### TST attack configuration ###
+parser.add_argument('--num_steps', type=int, default=50, help='maximum perturbation step K')
+parser.add_argument('--epsilon', type=float, default=0.05, help='perturbation bound')
+parser.add_argument('--step_size', type=float, default=0.05, help='step size')
 parser.add_argument('--dynamic_eta', type=int, default=1, help='whether to use dynamic stepsize scheduling')
-parser.add_argument('--trails', type=int, default=10, help='repeating times')
-parser.add_argument('--robust_kernel', type=int, default=0, help='whether to adversarially train deep kernels')
-parser.add_argument('--attack_num', type=int, default=1, help='number of steps during adversarial training')
+parser.add_argument('--ball', type=str, default='l_inf', choices=['l_inf', 'l_2'])
 parser.add_argument('--verbose', type=int, default=0, help='whether to print logs')
 parser.add_argument('--weight', type=str, default='1,45,1,1,60,1', help='attack weight')
 parser.add_argument('--adaptive_weight', type=int, default=0, help='whether to use adaptive reweighting')
 parser.add_argument('--surrogate', type=int, default=0, help='whether to use surrogate non-parametric TSTs to attack target TSTs')
-parser.add_argument('--WB', type=int, default=1, help='whether to use wild bootstrap')
-parser.add_argument('--ln', type=float, default=0.5, help='hyper parameters in wild bootstrap')
-parser.add_argument('--transfer', type=int, default=0, help='whether to replace P with P_prime')
-parser.add_argument('--seed1', type=int, default=1102)
-parser.add_argument('--seed2', type=int, default=819)
+parser.add_argument('--replace_P', type=int, default=0, help='whether to replace P with P_prime')
+### MMD-RoD configuration
+parser.add_argument('--robust_kernel', type=int, default=0, help='whether to adversarially train deep kernels')
+parser.add_argument('--lr_RoD', type=float, default=0.0005, help='learning rate for MMD-RoD')
+parser.add_argument('--num_steps_RoD', type=int, default=1, help='number of steps during adversarial training')
 parser.add_argument('--BA', type=int, default=0, help='whether to use benign and adversarial data together during adversarially training deep kernels')
 args = parser.parse_args()
 print(args)
@@ -216,7 +221,7 @@ def train_MMD_RoD(Real_dataloader, Fake_dataloader):
     sigmaOPT = MatConvert(np.ones(1) * np.sqrt(2*32*32), device, dtype)
     sigma0OPT = MatConvert(np.ones(1) * np.sqrt(0.005), device, dtype)
     MMD_RoD_test = MMD_RoD(HD=True, model=Featurizer(), 
-                        parameters=(epsilonOPT, sigmaOPT, sigma0OPT), hyperparameters=(args.lr_RoD, args.n_epochs, args.attack_num, 
+                        parameters=(epsilonOPT, sigmaOPT, sigma0OPT), hyperparameters=(args.lr_RoD, args.n_epochs, args.num_steps_RoD, 
                                         args.epsilon, args.step_size, args.dynamic_eta, args.verbose))
     MMD_RoD_test.train(Real_dataloader, Fake_dataloader)
     return MMD_RoD_test
@@ -475,7 +480,7 @@ for kk in range(K):
 
         adv_s2 = TSTAttack.attack(s1.cpu(), s2.cpu())
 
-        if args.transfer:
+        if args.replace_P:
             np.random.seed(seed=seed2 * (k + 555) + n)
             ind_R = np.random.choice(len(Real_MNIST_test_data), n, replace=False)
             s1 = Real_MNIST_test_data[ind_R]
