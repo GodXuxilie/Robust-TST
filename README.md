@@ -45,13 +45,13 @@ from TST_attack import two_sample_test_attack
 
 # Attack TSTs
 TST_adversary = two_sample_test_attack(num_steps=num_steps, epsilon=epsilon,dynamic_eta=True, 
-max_scale=max_scale, min_scale=min_scale, 
-test_rags=[(MMD_D_test, MMD_D_weight),
-          (MMD_G_test, MMD_G_weight),
-          (C2ST_S_test, C2ST_S_weight),
-          (C2ST_L_test, C2ST_L_weight),
-          (ME_test, ME_weight),
-          (SCF_test, SCF_weight)])
+                                      max_scale=max_scale, min_scale=min_scale, 
+                                      test_rags=[(MMD_D_test, MMD_D_weight),
+                                                (MMD_G_test, MMD_G_weight),
+                                                (C2ST_S_test, C2ST_S_weight),
+                                                (C2ST_L_test, C2ST_L_weight),
+                                                (ME_test, ME_weight),
+                                                (SCF_test, SCF_weight)])
 
 # Generate adversarial pairs
 P_test, Q_test = sample_from_P_Q()
