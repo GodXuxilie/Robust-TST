@@ -9,28 +9,33 @@ from TST_utils import MatConvert,Pdist2
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--n', type=int, default=100)
+### experimental configuration ###
 parser.add_argument('--gpu', type=str, default='0')
-parser.add_argument('--epsilon', type=float, default=0.05, help='perturbation bound')
-parser.add_argument('--num_steps', type=int, default=50, help='maximum perturbation step K')
-parser.add_argument('--step_size', type=float, default=0.05, help='step size')
-parser.add_argument('--n_epochs', type=int, default=2000)
-parser.add_argument('--ball', type=str, default='l_inf')
-parser.add_argument('--lr_RoD', type=float, default=0.0005, help='learning rate for MMD-RoD')
-parser.add_argument('--type1', type=int, default=0, help='whether to test Type-1 error')
-parser.add_argument('--dynamic_eta', type=int, default=1, help='whether to use dynamic stepsize scheduling')
+parser.add_argument('--seed1', type=int, default=1102)
+parser.add_argument('--seed2', type=int, default=819)
 parser.add_argument('--trails', type=int, default=10, help='repeating times')
-parser.add_argument('--robust_kernel', type=int, default=0, help='whether to adversarially train deep kernels')
-parser.add_argument('--attack_num', type=int, default=1, help='number of steps during adversarial training')
+### data set configuration ###
+parser.add_argument('--n', type=int, default=100, help='number of data in each set')
+parser.add_argument('--type1', type=int, default=0, help='whether to test Type-1 error')
+### train and test procedure configuration ###
+parser.add_argument('--n_epochs', type=int, default=2000, help='number of training epochs')
+parser.add_argument('--WB', type=int, default=1, help='whether to use wild bootstrap')
+parser.add_argument('--ln', type=float, default=0.5, help='hyper parameters in wild bootstrap')
+### TST attack configuration ###
+parser.add_argument('--num_steps', type=int, default=50, help='maximum perturbation step K')
+parser.add_argument('--epsilon', type=float, default=0.05, help='perturbation bound')
+parser.add_argument('--step_size', type=float, default=0.05, help='step size')
+parser.add_argument('--dynamic_eta', type=int, default=1, help='whether to use dynamic stepsize scheduling')
+parser.add_argument('--ball', type=str, default='l_inf', choices=['l_inf', 'l_2'])
 parser.add_argument('--verbose', type=int, default=0, help='whether to print logs')
 parser.add_argument('--weight', type=str, default='5,1,1,20,1,1', help='attack weight')
 parser.add_argument('--adaptive_weight', type=int, default=0, help='whether to use adaptive reweighting')
 parser.add_argument('--surrogate', type=int, default=0, help='whether to use surrogate non-parametric TSTs to attack target TSTs')
-parser.add_argument('--WB', type=int, default=1, help='whether to use wild bootstrap')
-parser.add_argument('--ln', type=float, default=0.5, help='hyper parameters in wild bootstrap')
 parser.add_argument('--replace_P', type=int, default=0, help='whether to replace P with P_prime')
-parser.add_argument('--seed1', type=int, default=1102)
-parser.add_argument('--seed2', type=int, default=819)
+### MMD-RoD configuration
+parser.add_argument('--robust_kernel', type=int, default=0, help='whether to adversarially train deep kernels')
+parser.add_argument('--lr_RoD', type=float, default=0.0005, help='learning rate for MMD-RoD')
+parser.add_argument('--num_steps_RoD', type=int, default=1, help='number of steps during adversarial training')
 parser.add_argument('--BA', type=int, default=0, help='whether to use benign and adversarial data together during adversarially training deep kernels')
 args = parser.parse_args()
 print(args)
@@ -199,7 +204,7 @@ def train_MMD_RoD(s1, s2):
     sigmaOPT = MatConvert(np.sqrt(np.random.rand(1) * 0.3), device, dtype)
     sigma0OPT = MatConvert(np.sqrt(np.random.rand(1) * 0.002), device, dtype)
     MMD_RoD_test = MMD_RoD(HD=False, model=ModelLatentF(x_in, H, x_out), parameters=(epsilonOPT, sigmaOPT, sigma0OPT), 
-                                        hyperparameters=(args.lr_RoD, N_epoch, args.attack_num, 
+                                        hyperparameters=(args.lr_RoD, N_epoch, args.num_steps_RoD, 
                                         args.epsilon, args.step_size, args.dynamic_eta, args.verbose))
     MMD_RoD_test.train(s1, s2)
     return MMD_RoD_test
