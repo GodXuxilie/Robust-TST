@@ -41,7 +41,7 @@ parser.add_argument('--surrogate', type=int, default=0, help='whether to use sur
 parser.add_argument('--replace_P', type=int, default=0, help='whether to replace P with P_prime')
 ### MMD-RoD configuration
 parser.add_argument('--robust_kernel', type=int, default=0, help='whether to adversarially train deep kernels')
-parser.add_argument('--lr_RoD', type=float, default=0.0005, help='learning rate for MMD-RoD')
+parser.add_argument('--lr_RoD', type=float, default=0.0002, help='learning rate for MMD-RoD')
 parser.add_argument('--num_steps_RoD', type=int, default=1, help='number of steps during adversarial training')
 parser.add_argument('--BA', type=int, default=0, help='whether to use benign and adversarial data together during adversarially training deep kernels')
 
