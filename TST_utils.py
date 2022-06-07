@@ -1,5 +1,4 @@
 import numpy as np
-from sympy import N
 import torch
 import freqopttest.data as data
 import freqopttest.tst as tst
