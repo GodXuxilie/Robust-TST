@@ -38,11 +38,6 @@ print(args)
 
 # Setup for experiments
 os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
-np.random.seed(args.seed1)
-torch.manual_seed(args.seed1)
-torch.cuda.manual_seed(args.seed1)
-torch.backends.cudnn.deterministic = True
-
 dtype = torch.float
 device = torch.device("cuda")
 N_per = 100 # permutation times
@@ -60,10 +55,14 @@ N = 100 # number of test sets
 N_f = 100 # number of test sets (float)
 N1 = 9 * n
 N2 = 9 * n
-seed1 = args.seed1
-seed2 = args.seed2
 batch_size = min(n * 2, 128) # batch size for C2ST-S and C2ST-L
 N_epoch_C2ST = int(500 * 18 * n / batch_size)
+seed1 = args.seed1
+seed2 = args.seed2
+np.random.seed(seed1)
+torch.manual_seed(seed1)
+torch.cuda.manual_seed(seed1)
+torch.backends.cudnn.deterministic = True
 
 Results = np.zeros([8, K])
 ATTACKResults = np.zeros([8, K])
@@ -160,7 +159,7 @@ def train_MMD_D(s1, s2):
     epsilonOPT = MatConvert(np.random.rand(1) * (10 ** (-10)), device, dtype)
     sigmaOPT = MatConvert(np.sqrt(np.random.rand(1) * 0.3), device, dtype)
     sigma0OPT = MatConvert(np.sqrt(np.random.rand(1) * 0.002), device, dtype)
-    MMD_D_test = MMD_D(device=device, dtype=dtype, HD=False, model=ModelLatentF(x_in, H, x_out), 
+    MMD_D_test = MMD_D(HD=False, model=ModelLatentF(x_in, H, x_out), 
                         parameters=(epsilonOPT, sigmaOPT, sigma0OPT), hyperparameters=(learning_rate_MMD_D, N_epoch))
     MMD_D_test.train(s1, s2)
     return MMD_D_test
@@ -170,29 +169,29 @@ def train_MMD_G(s1, s2):
     S = MatConvert(S, device, dtype)
     Dxy = Pdist2(S[:N1,:],S[N1:,:])
     sigma0 = Dxy.median() * (2**(-2.1))
-    MMD_G_test = MMD_G(device=device, dtype=dtype, HD=False, parameters=sigma0, hyperparameters=(learning_rate_MMD_G, N_epoch))
+    MMD_G_test = MMD_G(HD=False, parameters=sigma0, hyperparameters=(learning_rate_MMD_G, N_epoch))
     MMD_G_test.train(s1, s2)
     return MMD_G_test
 
 def train_C2ST_S(s1, s2):
-    C2ST_S_test = C2ST_S(device=device, dtype=dtype, HD=False, hyperparameters=(x_in, H, x_out, learning_rate_C2ST,
+    C2ST_S_test = C2ST_S(HD=False, hyperparameters=(x_in, H, x_out, learning_rate_C2ST,
                                                                         N_epoch_C2ST, batch_size))
     C2ST_S_test.train(s1, s2)
     return C2ST_S_test
 
 def train_C2ST_L(s1, s2):
-    C2ST_L_test = C2ST_L(device=device, dtype=dtype, HD=False, hyperparameters=(x_in, H, x_out, learning_rate_C2ST,
+    C2ST_L_test = C2ST_L(HD=False, hyperparameters=(x_in, H, x_out, learning_rate_C2ST,
                                                                         N_epoch_C2ST, batch_size))
     C2ST_L_test.train(s1, s2)      
     return C2ST_L_test
 
 def train_ME(s1, s2):
-    ME_test = ME(device=device, dtype=dtype, HD=False, hyperparameters=(alpha, 1,1,5,15))
+    ME_test = ME(HD=False, hyperparameters=(alpha, 1,1,5,15))
     ME_test.train(s1, s2)
     return ME_test
 
 def train_SCF(s1, s2):
-    SCF_test = SCF(device=device, dtype=dtype, HD=False, hyperparameters=(alpha, 1,1,5,15))
+    SCF_test = SCF(HD=False, hyperparameters=(alpha, 1,1,5,15))
     SCF_test.train(s1, s2)
     return SCF_test
 
@@ -200,7 +199,7 @@ def train_MMD_RoD(s1, s2):
     epsilonOPT = MatConvert(np.random.rand(1) * (10 ** (-10)), device, dtype)
     sigmaOPT = MatConvert(np.sqrt(np.random.rand(1) * 0.3), device, dtype)
     sigma0OPT = MatConvert(np.sqrt(np.random.rand(1) * 0.002), device, dtype)
-    MMD_RoD_test = MMD_RoD(device=device, dtype=dtype, HD=False, model=ModelLatentF(x_in, H, x_out), parameters=(epsilonOPT, sigmaOPT, sigma0OPT), 
+    MMD_RoD_test = MMD_RoD(HD=False, model=ModelLatentF(x_in, H, x_out), parameters=(epsilonOPT, sigmaOPT, sigma0OPT), 
                                         hyperparameters=(args.lr_RoD, N_epoch, args.attack_num, 
                                         args.epsilon, args.step_size, args.dynamic_eta, args.verbose))
     MMD_RoD_test.train(s1, s2)

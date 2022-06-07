@@ -4,7 +4,7 @@ from torch.autograd import Variable
 import copy
 
 class two_sample_test_attack:
-    def __init__(self, num_steps=50, epsilon=0.031, step_size=0.031,ball='l_inf', dynamic_eta=1, verbose=0, max_scale=1, min_scale=-1,
+    def __init__(self, num_steps=50, epsilon=0.031, step_size=0.031, ball='l_inf', dynamic_eta=1, verbose=0, max_scale=1, min_scale=-1,
                     adaptive_weight=0, test_args=None) -> None:
         super(two_sample_test_attack, self).__init__()
 
