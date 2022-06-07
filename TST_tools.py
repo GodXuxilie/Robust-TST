@@ -17,7 +17,7 @@ class Two_Sample_Test:
         pass
 
 class MMD_D(Two_Sample_Test):
-    def __init__(self, model, parameters, hyperparameters, device, dtype, HD):
+    def __init__(self, model, parameters, hyperparameters, device=torch.device("cuda"), dtype=torch.float, HD=False):
         super().__init__()
         self.device = device
         self.dtype = dtype
@@ -119,7 +119,7 @@ class MMD_D(Two_Sample_Test):
         return MMD_D_test_criterion
 
 class MMD_RoD(Two_Sample_Test):
-    def __init__(self, model, parameters, hyperparameters, device, dtype, HD):
+    def __init__(self, model, parameters, hyperparameters, device=torch.device("cuda"), dtype=torch.float, HD=False):
         super().__init__()
         self.device = device
         self.dtype = dtype
@@ -240,7 +240,7 @@ class MMD_G(Two_Sample_Test):
     def __init__(self):
         super().__init__()
 
-    def __init__(self, device, dtype, HD, parameters, hyperparameters):
+    def __init__(self, parameters, hyperparameters, device=torch.device("cuda"), dtype=torch.float, HD=False):
         super().__init__()
         self.device = device
         self.dtype = dtype
@@ -295,7 +295,7 @@ class MMD_G(Two_Sample_Test):
         return MMD_G_test_criterion
 
 class C2ST_S(Two_Sample_Test):
-    def __init__(self, device, dtype, HD, hyperparameters, discriminator=None):
+    def __init__(self, hyperparameters, discriminator=None, device=torch.device("cuda"), dtype=torch.float, HD=False):
         super().__init__()
         self.device = device
         self.dtype = dtype
@@ -373,7 +373,7 @@ class C2ST_S(Two_Sample_Test):
         return C2ST_S_test_criterion
 
 class C2ST_L(Two_Sample_Test):
-    def __init__(self, device, dtype, HD, hyperparameters, discriminator=None):
+    def __init__(self, hyperparameters, discriminator=None, device=torch.device("cuda"), dtype=torch.float, HD=False):
         super().__init__()
         self.device = device
         self.dtype = dtype
@@ -451,7 +451,7 @@ class C2ST_L(Two_Sample_Test):
         return C2ST_L_test_criterion
     
 class ME(Two_Sample_Test):
-    def __init__(self, device, dtype, HD, hyperparameters):
+    def __init__(self, hyperparameters, device=torch.device("cuda"), dtype=torch.float, HD=False):
         super().__init__()
         self.device = device
         self.dtype = dtype
@@ -496,7 +496,7 @@ class ME(Two_Sample_Test):
         return ME_test_criterion
 
 class SCF(Two_Sample_Test):
-    def __init__(self, device, dtype, HD, hyperparameters):
+    def __init__(self, hyperparameters, device=torch.device("cuda"), dtype=torch.float, HD=False):
         super().__init__()
         self.device = device
         self.dtype = dtype

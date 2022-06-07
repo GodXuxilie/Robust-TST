@@ -21,12 +21,13 @@ Following the setting of [MMD-D](https://github.com/fengliu90/DK-for-TST), befor
 Import and initialize TST and adversary agaisnt TST with
 
 ```
-s1, s2 = sample_from_P_Q()
-
 from TST_tools import MMD_D, MMD_G, C2ST_L, C2ST_S, ME, SCF, MMD_RoD
-MMD_D_test = MMD_D()
-
 from TST_attack import two_sample_test_attack
+
+s1, s2 = sample_from_P_Q()
+MMD_D_test = MMD_D().train(s1, s2)
+MMD_
+
 
 TST_adversary = two_sample_test_attack(num_steps=num_steps, epsilon=epsilon,dynamic_eta=1, max_scale=max_scale, min_scale=min_scale, test)
 ```

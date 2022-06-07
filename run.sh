@@ -1,5 +1,5 @@
 # test power in the benign settings and under white-box attacks
-nohup python TST_Blob.py --gpu=0 --n=10 > log/Blob_100.log &
+nohup python TST_Blob.py --gpu=0 > log/Blob_100.log &
 
 nohup python TST_HDGM.py --gpu=0 > log/HDGM_3000.log &
 
