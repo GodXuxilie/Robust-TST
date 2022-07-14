@@ -96,7 +96,6 @@ python TST_Blob.py
   pdf = 	 {https://proceedings.mlr.press/v162/xu22m/xu22m.pdf},
   url = 	 {https://proceedings.mlr.press/v162/xu22m.html},
 }
-
 ```
 
 ## Contact
