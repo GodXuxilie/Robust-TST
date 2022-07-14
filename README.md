@@ -83,12 +83,20 @@ python TST_Blob.py
 
 ## Reference
 ```
-@article{xu2022adversarial,
-  title={Adversarial Attacks and Defense for Non-Parametric Two-Sample Tests},
-  author={Xu, Xilie and Zhang, Jingfeng and Liu, Feng and Sugiyama, Masashi and Kankanhalli, Mohan},
-  journal={arXiv preprint arXiv:2202.03077},
-  year={2022}
+@InProceedings{xu2022adversarial,
+  title = 	 {Adversarial Attack and Defense for Non-Parametric Two-Sample Tests},
+  author =       {Xu, Xilie and Zhang, Jingfeng and Liu, Feng and Sugiyama, Masashi and Kankanhalli, Mohan},
+  booktitle = 	 {Proceedings of the 39th International Conference on Machine Learning},
+  pages = 	 {24743--24769},
+  year = 	 {2022},
+  volume = 	 {162},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {17--23 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {https://proceedings.mlr.press/v162/xu22m/xu22m.pdf},
+  url = 	 {https://proceedings.mlr.press/v162/xu22m.html},
 }
+
 ```
 
 ## Contact
