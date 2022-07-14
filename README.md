@@ -1,6 +1,6 @@
 # Adversarial Attacks and Defense for Non-Parametric TSTs
 
-This repository provides codes for ICML 2022 paper: **Adversarial Attack and Defense for Non-Parametric Two-Sample Tests** (https://arxiv.org/abs/2202.03077) 
+This repository provides codes for ICML 2022 paper: **Adversarial Attack and Defense for Non-Parametric Two-Sample Tests** (https://proceedings.mlr.press/v162/xu22m.html) 
  *Xilie Xu\* (NUS), Jingfeng Zhang\* (RIKEN-AIP), Feng Liu (The University of Melbourne), Masashi Sugiyama (RIKEN-AIP/The University of Toyko), Mohan Kankanhalli (NUS)*
 
 ## Requirements
@@ -92,9 +92,7 @@ python TST_Blob.py
   volume = 	 {162},
   series = 	 {Proceedings of Machine Learning Research},
   month = 	 {17--23 Jul},
-  publisher =    {PMLR},
-  pdf = 	 {https://proceedings.mlr.press/v162/xu22m/xu22m.pdf},
-  url = 	 {https://proceedings.mlr.press/v162/xu22m.html},
+  publisher =    {PMLR}
 }
 ```
 
